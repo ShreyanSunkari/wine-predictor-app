@@ -79,23 +79,19 @@ if st.button('Predict Wine Quality'):
     st.info(f"Confidence for 'Good' quality: **{prediction_proba[0][1]*100:.2f}%**")
     st.info(f"Confidence for 'Not Good' quality: **{prediction_proba[0][0]*100:.2f}%**")
 
-# --- ADD THIS NEW SECTION FOR FEATURE 1 ---
-st.write("---") # Adds a horizontal line for separation
+# --- Feature Importance Section (CORRECTED) ---
+st.write("---") 
 
-# Here, we use the st.expander function to create a collapsible section
 with st.expander("Click here to see what makes a quality wine"):
     st.write(
         "This chart shows which chemical properties have the biggest impact on wine quality "
         "according to the prediction model."
     )
-
-    # We need to load the original CSV to get the correct column names for the chart
-    wine_df = pd.read_csv('winequality-red.csv')
-    X = wine_df.drop('quality', axis=1)
-
+    
     # Create a dataframe for feature importances
+    # We get the feature names from the scaler object directly, no need to load the CSV
     feature_importances = pd.DataFrame({
-        'feature': X.columns,
+        'feature': scaler.feature_names_in_,
         'importance': model.feature_importances_
     }).sort_values('importance', ascending=False)
 
