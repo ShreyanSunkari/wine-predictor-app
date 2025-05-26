@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import joblib
+import altair as alt # Import the altair library
 
 # --- Load the Trained Model and Scaler ---
 try:
@@ -79,7 +80,7 @@ if st.button('Predict Wine Quality'):
     st.info(f"Confidence for 'Good' quality: **{prediction_proba[0][1]*100:.2f}%**")
     st.info(f"Confidence for 'Not Good' quality: **{prediction_proba[0][0]*100:.2f}%**")
 
-# --- Feature Importance Section (CORRECTED) ---
+# --- Feature Importance Section ---
 st.write("---") 
 
 with st.expander("Click here to see what makes a quality wine"):
@@ -88,12 +89,19 @@ with st.expander("Click here to see what makes a quality wine"):
         "according to the prediction model."
     )
     
-    # Create a dataframe for feature importances
-    # We get the feature names from the scaler object directly, no need to load the CSV
     feature_importances = pd.DataFrame({
         'feature': scaler.feature_names_in_,
         'importance': model.feature_importances_
-    }).sort_values('importance', ascending=False)
+    })
 
-    # Display the feature importances as a bar chart
-    st.bar_chart(feature_importances.set_index('feature'))
+    # --- THIS IS THE UPDATED CHART CODE ---
+    # Create the Altair chart
+    chart = alt.Chart(feature_importances).mark_bar().encode(
+        x=alt.X('importance', title='Importance Score'),
+        y=alt.Y('feature', title='Wine Feature', sort='-x') # '-x' sorts the bars
+    ).configure_view(
+        disable_actions=True # This is the line that removes the 3-dot menu
+    )
+
+    # Display the chart in Streamlit
+    st.altair_chart(chart, use_container_width=True)
