@@ -43,78 +43,67 @@ st.write(
 )
 
 
-# --- Preset Buttons (NEW FEATURE) ---
+# --- Preset Buttons ---
 
-# Define default values for all sliders
+# MODIFICATION 1: Use the correct, space-included names as keys
 default_values = {
-    'fixed_acidity': 7.4, 'volatile_acidity': 0.7, 'citric_acid': 0.0,
-    'residual_sugar': 1.9, 'chlorides': 0.076, 'free_sulfur_dioxide': 11.0,
-    'total_sulfur_dioxide': 34.0, 'density': 0.9978, 'ph': 3.51,
+    'fixed acidity': 7.4, 'volatile acidity': 0.7, 'citric acid': 0.0,
+    'residual sugar': 1.9, 'chlorides': 0.076, 'free sulfur dioxide': 11.0,
+    'total sulfur dioxide': 34.0, 'density': 0.9978, 'ph': 3.51,
     'sulphates': 0.56, 'alcohol': 9.4
 }
 
-# Initialize session state for each slider if it doesn't exist
 for key, value in default_values.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-# Define the callback functions to update session state with preset values
+# MODIFICATION 2: Update preset functions to use space-included keys
 def load_good_wine_preset():
-    # A real example of a "good" wine from the dataset
-    st.session_state.fixed_acidity = 6.6
-    st.session_state.volatile_acidity = 0.52
-    st.session_state.citric_acid = 0.08
-    st.session_state.residual_sugar = 2.4
-    st.session_state.chlorides = 0.07
-    st.session_state.free_sulfur_dioxide = 13.0
-    st.session_state.total_sulfur_dioxide = 32.0
-    st.session_state.density = 0.9955
-    st.session_state.ph = 3.42
-    st.session_state.sulphates = 0.62
-    st.session_state.alcohol = 11.4
+    st.session_state['fixed acidity'] = 6.6
+    st.session_state['volatile acidity'] = 0.52
+    st.session_state['citric acid'] = 0.08
+    st.session_state['residual sugar'] = 2.4
+    st.session_state['chlorides'] = 0.07
+    st.session_state['free sulfur dioxide'] = 13.0
+    st.session_state['total sulfur dioxide'] = 32.0
+    st.session_state['density'] = 0.9955
+    st.session_state['ph'] = 3.42
+    st.session_state['sulphates'] = 0.62
+    st.session_state['alcohol'] = 11.4
 
 def load_not_good_wine_preset():
-    # A real example of a "not good" wine from the dataset
-    st.session_state.fixed_acidity = 7.4
-    st.session_state.volatile_acidity = 0.7
-    st.session_state.citric_acid = 0.0
-    st.session_state.residual_sugar = 1.9
-    st.session_state.chlorides = 0.076
-    st.session_state.free_sulfur_dioxide = 11.0
-    st.session_state.total_sulfur_dioxide = 34.0
-    st.session_state.density = 0.9978
-    st.session_state.ph = 3.51
-    st.session_state.sulphates = 0.56
-    st.session_state.alcohol = 9.4
+    st.session_state['fixed acidity'] = 7.4
+    st.session_state['volatile acidity'] = 0.7
+    st.session_state['citric acid'] = 0.0
+    st.session_state['residual sugar'] = 1.9
+    st.session_state['chlorides'] = 0.076
+    st.session_state['free sulfur dioxide'] = 11.0
+    st.session_state['total sulfur dioxide'] = 34.0
+    st.session_state['density'] = 0.9978
+    st.session_state['ph'] = 3.51
+    st.session_state['sulphates'] = 0.56
+    st.session_state['alcohol'] = 9.4
 
 st.write("---")
 st.subheader("Try an Example Preset")
 col1_ex, col2_ex = st.columns(2)
 with col1_ex:
-    st.button(
-        "Load 'Good' Wine Example",
-        on_click=load_good_wine_preset,
-        use_container_width=True
-    )
+    st.button("Load 'Good' Wine Example", on_click=load_good_wine_preset, use_container_width=True)
 with col2_ex:
-    st.button(
-        "Load 'Not Good' Wine Example",
-        on_click=load_not_good_wine_preset,
-        use_container_width=True
-    )
+    st.button("Load 'Not Good' Wine Example", on_click=load_not_good_wine_preset, use_container_width=True)
 st.write("---")
 
-# --- Sliders (MODIFIED TO USE SESSION STATE) ---
+# MODIFICATION 3: Update slider keys to use space-included names
 col1_sliders, col2_sliders = st.columns(2)
 with col1_sliders:
-    fixed_acidity = st.slider('Fixed Acidity (g/dm³)', 4.0, 16.0, key='fixed_acidity')
-    volatile_acidity = st.slider('Volatile Acidity (g/dm³)', 0.1, 1.6, key='volatile_acidity')
-    citric_acid = st.slider('Citric Acid (g/dm³)', 0.0, 1.0, key='citric_acid')
-    residual_sugar = st.slider('Residual Sugar (g/dm³)', 0.9, 16.0, key='residual_sugar')
+    fixed_acidity = st.slider('Fixed Acidity (g/dm³)', 4.0, 16.0, key='fixed acidity')
+    volatile_acidity = st.slider('Volatile Acidity (g/dm³)', 0.1, 1.6, key='volatile acidity')
+    citric_acid = st.slider('Citric Acid (g/dm³)', 0.0, 1.0, key='citric acid')
+    residual_sugar = st.slider('Residual Sugar (g/dm³)', 0.9, 16.0, key='residual sugar')
     chlorides = st.slider('Chlorides (g/dm³)', 0.01, 0.62, key='chlorides')
-    free_sulfur_dioxide = st.slider('Free Sulfur Dioxide (mg/dm³)', 1, 72, key='free_sulfur_dioxide')
+    free_sulfur_dioxide = st.slider('Free Sulfur Dioxide (mg/dm³)', 1, 72, key='free sulfur dioxide')
 with col2_sliders:
-    total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, key='total_sulfur_dioxide')
+    total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, key='total sulfur dioxide')
     density = st.slider('Density (g/cm³)', 0.9900, 1.0040, step=0.0001, format="%.4f", key='density')
     ph = st.slider('pH', 2.70, 4.00, key='ph')
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, key='sulphates')
@@ -123,8 +112,9 @@ with col2_sliders:
 
 # --- Prediction Logic ---
 if st.button('Predict Wine Quality'):
-    # When predicting, we now use the values from session state
-    feature_names = list(default_values.keys())
+    # MODIFICATION 4: Get feature names directly from the scaler for robustness
+    feature_names = scaler.feature_names_in_
+    # Create the list of values in the correct order
     input_values = [st.session_state[key] for key in feature_names]
 
     input_data = pd.DataFrame([input_values], columns=feature_names)
