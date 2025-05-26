@@ -4,7 +4,6 @@ import numpy as np
 import joblib
 
 # --- Load the Trained Model and Scaler ---
-# Load the objects from the files you saved earlier
 try:
     model = joblib.load('model.joblib')
     scaler = joblib.load('scaler.joblib')
@@ -19,6 +18,20 @@ st.set_page_config(
     page_icon="🍷",
     layout="centered"
 )
+
+
+# --- Font and Styling (NEW SECTION) ---
+# This injects custom CSS to change the font of the title and subheaders.
+# We are using 'Montserrat' from Google Fonts as a professional, bold sans-serif font.
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+    h1, h3 {
+        font-family: 'Montserrat', sans-serif !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
 
 
 # --- Web App Interface ---
@@ -41,7 +54,6 @@ with col1:
 
 with col2:
     total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, 34)
-    # THIS IS THE CORRECTED LINE:
     density = st.slider('Density (g/cm³)', 0.9900, 1.0040, 0.9978, step=0.0001, format="%.4f")
     ph = st.slider('pH', 2.70, 4.00, 3.51)
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, 0.56)
