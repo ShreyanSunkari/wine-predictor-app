@@ -44,8 +44,6 @@ st.write(
 
 
 # --- Preset Buttons ---
-
-# CORRECTION 1: Changed 'ph' to 'pH'
 default_values = {
     'fixed acidity': 7.4, 'volatile acidity': 0.7, 'citric acid': 0.0,
     'residual sugar': 1.9, 'chlorides': 0.076, 'free sulfur dioxide': 11.0,
@@ -57,7 +55,6 @@ for key, value in default_values.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-# CORRECTION 2: Changed 'ph' to 'pH'
 def load_good_wine_preset():
     st.session_state['fixed acidity'] = 6.6
     st.session_state['volatile acidity'] = 0.52
@@ -93,7 +90,7 @@ with col2_ex:
     st.button("Load 'Not Good' Wine Example", on_click=load_not_good_wine_preset, use_container_width=True)
 st.write("---")
 
-# CORRECTION 3: Changed key from 'ph' to 'pH'
+# --- Sliders ---
 col1_sliders, col2_sliders = st.columns(2)
 with col1_sliders:
     fixed_acidity = st.slider('Fixed Acidity (g/dm³)', 4.0, 16.0, key='fixed acidity')
@@ -105,22 +102,20 @@ with col1_sliders:
 with col2_sliders:
     total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, key='total sulfur dioxide')
     density = st.slider('Density (g/cm³)', 0.9900, 1.0040, step=0.0001, format="%.4f", key='density')
-    ph = st.slider('pH', 2.70, 4.00, key='pH') # <-- The key is now 'pH'
+    ph = st.slider('pH', 2.70, 4.00, key='pH')
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, key='sulphates')
     alcohol = st.slider('Alcohol (% vol.)', 8.0, 15.0, key='alcohol')
 
-
 # --- Prediction Logic ---
 if st.button('Predict Wine Quality'):
-    # CORRECTION 4: No code change here, but the logic is now correct because the keys match
+    # This code will now run and might still produce an error, which is expected.
+    # The important part is the debug info that will be printed below.
     feature_names = scaler.feature_names_in_
     input_values = [st.session_state[key] for key in feature_names]
-
     input_data = pd.DataFrame([input_values], columns=feature_names)
     input_data_scaled = scaler.transform(input_data)
     prediction = model.predict(input_data_scaled)
     prediction_proba = model.predict_proba(input_data_scaled)
-
     st.subheader("Prediction Result")
     if prediction[0] == 'good':
         st.success(f"This wine is predicted to be of **GOOD** quality.")
@@ -130,8 +125,33 @@ if st.button('Predict Wine Quality'):
     st.info(f"Confidence for 'Good' quality: **{prediction_proba[0][1]*100:.2f}%**")
     st.info(f"Confidence for 'Not Good' quality: **{prediction_proba[0][0]*100:.2f}%**")
 
-# --- Feature Importance Section ---
+# --- START OF NEW DEBUGGING SECTION ---
 st.write("---")
+st.subheader("Debug Info")
+st.write(
+    "This section helps diagnose the problem. Please share a screenshot of this "
+    "with the support agent if the error persists."
+)
+
+try:
+    feature_names = scaler.feature_names_in_
+    session_keys = list(st.session_state.keys())
+
+    st.write("**1. Feature Names the Model Expects:**")
+    st.write(list(feature_names))
+
+    st.write("**2. Keys Currently in the App's Memory (Session State):**")
+    st.write(session_keys)
+
+    missing_keys = [key for key in feature_names if key not in session_keys]
+    if missing_keys:
+        st.error(f"**Problem Found:** The following keys are MISSING from the session state: **{missing_keys}**")
+    else:
+        st.success("**Diagnosis:** All required keys are present in the session state.")
+except Exception as e:
+    st.error(f"An error occurred during debugging: {e}")
+
+# --- Feature Importance Section ---
 with st.expander("Click here to see what makes a quality wine"):
     st.write("This chart shows which chemical properties have the biggest impact on wine quality according to the prediction model.")
     feature_importances = pd.DataFrame({
