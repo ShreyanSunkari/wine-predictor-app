@@ -41,7 +41,8 @@ with col1:
 
 with col2:
     total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, 34)
-    density = st.slider('Density (g/cm³)', 0.9900, 1.0040, 0.9978, format="%.4f")
+    # THIS IS THE CORRECTED LINE:
+    density = st.slider('Density (g/cm³)', 0.9900, 1.0040, 0.9978, step=0.0001, format="%.4f")
     ph = st.slider('pH', 2.70, 4.00, 3.51)
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, 0.56)
     alcohol = st.slider('Alcohol (% vol.)', 8.0, 15.0, 9.4)
