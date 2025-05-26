@@ -20,9 +20,7 @@ st.set_page_config(
 )
 
 
-# --- Font and Styling (NEW SECTION) ---
-# This injects custom CSS to change the font of the title and subheaders.
-# We are using 'Montserrat' from Google Fonts as a professional, bold sans-serif font.
+# --- Font and Styling ---
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
@@ -62,30 +60,44 @@ with col2:
 
 # --- Prediction Logic ---
 if st.button('Predict Wine Quality'):
-    # Create a DataFrame from the user inputs in the correct order
     feature_names = ['fixed acidity', 'volatile acidity', 'citric acid', 'residual sugar',
                      'chlorides', 'free sulfur dioxide', 'total sulfur dioxide', 'density',
                      'pH', 'sulphates', 'alcohol']
-    
     input_data = pd.DataFrame([[
         fixed_acidity, volatile_acidity, citric_acid, residual_sugar, chlorides,
         free_sulfur_dioxide, total_sulfur_dioxide, density, ph, sulphates, alcohol
     ]], columns=feature_names)
-
-    # Scale the input data using the loaded scaler
     input_data_scaled = scaler.transform(input_data)
-
-    # Make the prediction
     prediction = model.predict(input_data_scaled)
     prediction_proba = model.predict_proba(input_data_scaled)
-
-    # Display the result
     st.subheader("Prediction Result")
     if prediction[0] == 'good':
         st.success(f"This wine is predicted to be of **GOOD** quality.")
     else:
         st.error(f"This wine is predicted to be of **NOT GOOD** quality.")
-
     st.write("Prediction Confidence:")
     st.info(f"Confidence for 'Good' quality: **{prediction_proba[0][1]*100:.2f}%**")
     st.info(f"Confidence for 'Not Good' quality: **{prediction_proba[0][0]*100:.2f}%**")
+
+# --- ADD THIS NEW SECTION FOR FEATURE 1 ---
+st.write("---") # Adds a horizontal line for separation
+
+# Here, we use the st.expander function to create a collapsible section
+with st.expander("Click here to see what makes a quality wine"):
+    st.write(
+        "This chart shows which chemical properties have the biggest impact on wine quality "
+        "according to the prediction model."
+    )
+
+    # We need to load the original CSV to get the correct column names for the chart
+    wine_df = pd.read_csv('winequality-red.csv')
+    X = wine_df.drop('quality', axis=1)
+
+    # Create a dataframe for feature importances
+    feature_importances = pd.DataFrame({
+        'feature': X.columns,
+        'importance': model.feature_importances_
+    }).sort_values('importance', ascending=False)
+
+    # Display the feature importances as a bar chart
+    st.bar_chart(feature_importances.set_index('feature'))
