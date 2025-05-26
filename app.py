@@ -45,11 +45,11 @@ st.write(
 
 # --- Preset Buttons ---
 
-# MODIFICATION 1: Use the correct, space-included names as keys
+# CORRECTION 1: Changed 'ph' to 'pH'
 default_values = {
     'fixed acidity': 7.4, 'volatile acidity': 0.7, 'citric acid': 0.0,
     'residual sugar': 1.9, 'chlorides': 0.076, 'free sulfur dioxide': 11.0,
-    'total sulfur dioxide': 34.0, 'density': 0.9978, 'ph': 3.51,
+    'total sulfur dioxide': 34.0, 'density': 0.9978, 'pH': 3.51,
     'sulphates': 0.56, 'alcohol': 9.4
 }
 
@@ -57,7 +57,7 @@ for key, value in default_values.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-# MODIFICATION 2: Update preset functions to use space-included keys
+# CORRECTION 2: Changed 'ph' to 'pH'
 def load_good_wine_preset():
     st.session_state['fixed acidity'] = 6.6
     st.session_state['volatile acidity'] = 0.52
@@ -67,7 +67,7 @@ def load_good_wine_preset():
     st.session_state['free sulfur dioxide'] = 13.0
     st.session_state['total sulfur dioxide'] = 32.0
     st.session_state['density'] = 0.9955
-    st.session_state['ph'] = 3.42
+    st.session_state['pH'] = 3.42
     st.session_state['sulphates'] = 0.62
     st.session_state['alcohol'] = 11.4
 
@@ -80,7 +80,7 @@ def load_not_good_wine_preset():
     st.session_state['free sulfur dioxide'] = 11.0
     st.session_state['total sulfur dioxide'] = 34.0
     st.session_state['density'] = 0.9978
-    st.session_state['ph'] = 3.51
+    st.session_state['pH'] = 3.51
     st.session_state['sulphates'] = 0.56
     st.session_state['alcohol'] = 9.4
 
@@ -93,7 +93,7 @@ with col2_ex:
     st.button("Load 'Not Good' Wine Example", on_click=load_not_good_wine_preset, use_container_width=True)
 st.write("---")
 
-# MODIFICATION 3: Update slider keys to use space-included names
+# CORRECTION 3: Changed key from 'ph' to 'pH'
 col1_sliders, col2_sliders = st.columns(2)
 with col1_sliders:
     fixed_acidity = st.slider('Fixed Acidity (g/dm³)', 4.0, 16.0, key='fixed acidity')
@@ -105,16 +105,15 @@ with col1_sliders:
 with col2_sliders:
     total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, key='total sulfur dioxide')
     density = st.slider('Density (g/cm³)', 0.9900, 1.0040, step=0.0001, format="%.4f", key='density')
-    ph = st.slider('pH', 2.70, 4.00, key='ph')
+    ph = st.slider('pH', 2.70, 4.00, key='pH') # <-- The key is now 'pH'
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, key='sulphates')
     alcohol = st.slider('Alcohol (% vol.)', 8.0, 15.0, key='alcohol')
 
 
 # --- Prediction Logic ---
 if st.button('Predict Wine Quality'):
-    # MODIFICATION 4: Get feature names directly from the scaler for robustness
+    # CORRECTION 4: No code change here, but the logic is now correct because the keys match
     feature_names = scaler.feature_names_in_
-    # Create the list of values in the correct order
     input_values = [st.session_state[key] for key in feature_names]
 
     input_data = pd.DataFrame([input_values], columns=feature_names)
