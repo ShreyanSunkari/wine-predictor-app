@@ -106,16 +106,33 @@ with col2_sliders:
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, key='sulphates')
     alcohol = st.slider('Alcohol (% vol.)', 8.0, 15.0, key='alcohol')
 
-# --- Prediction Logic ---
+
+# --- Prediction Logic (REWRITTEN FOR ROBUSTNESS) ---
 if st.button('Predict Wine Quality'):
-    # This code will now run and might still produce an error, which is expected.
-    # The important part is the debug info that will be printed below.
-    feature_names = scaler.feature_names_in_
-    input_values = [st.session_state[key] for key in feature_names]
-    input_data = pd.DataFrame([input_values], columns=feature_names)
+    # Step 1: Create a dictionary from the slider variables.
+    # The st.slider functions return the current value, which we've stored.
+    input_dict = {
+        'fixed acidity': fixed_acidity, 'volatile acidity': volatile_acidity,
+        'citric acid': citric_acid, 'residual sugar': residual_sugar,
+        'chlorides': chlorides, 'free sulfur dioxide': free_sulfur_dioxide,
+        'total sulfur dioxide': total_sulfur_dioxide, 'density': density,
+        'pH': ph, 'sulphates': sulphates, 'alcohol': alcohol
+    }
+
+    # Step 2: Convert the dictionary to a pandas DataFrame.
+    input_data = pd.DataFrame([input_dict])
+
+    # Step 3: Ensure the DataFrame columns are in the exact order the model expects.
+    # This is a very robust way to prevent ordering errors.
+    ordered_feature_names = scaler.feature_names_in_
+    input_data = input_data[ordered_feature_names]
+
+    # Step 4: Scale the data and make a prediction.
     input_data_scaled = scaler.transform(input_data)
     prediction = model.predict(input_data_scaled)
     prediction_proba = model.predict_proba(input_data_scaled)
+
+    # Display the result (no changes here)
     st.subheader("Prediction Result")
     if prediction[0] == 'good':
         st.success(f"This wine is predicted to be of **GOOD** quality.")
@@ -125,33 +142,10 @@ if st.button('Predict Wine Quality'):
     st.info(f"Confidence for 'Good' quality: **{prediction_proba[0][1]*100:.2f}%**")
     st.info(f"Confidence for 'Not Good' quality: **{prediction_proba[0][0]*100:.2f}%**")
 
-# --- START OF NEW DEBUGGING SECTION ---
-st.write("---")
-st.subheader("Debug Info")
-st.write(
-    "This section helps diagnose the problem. Please share a screenshot of this "
-    "with the support agent if the error persists."
-)
-
-try:
-    feature_names = scaler.feature_names_in_
-    session_keys = list(st.session_state.keys())
-
-    st.write("**1. Feature Names the Model Expects:**")
-    st.write(list(feature_names))
-
-    st.write("**2. Keys Currently in the App's Memory (Session State):**")
-    st.write(session_keys)
-
-    missing_keys = [key for key in feature_names if key not in session_keys]
-    if missing_keys:
-        st.error(f"**Problem Found:** The following keys are MISSING from the session state: **{missing_keys}**")
-    else:
-        st.success("**Diagnosis:** All required keys are present in the session state.")
-except Exception as e:
-    st.error(f"An error occurred during debugging: {e}")
 
 # --- Feature Importance Section ---
+# We can remove the debug info now
+st.write("---")
 with st.expander("Click here to see what makes a quality wine"):
     st.write("This chart shows which chemical properties have the biggest impact on wine quality according to the prediction model.")
     feature_importances = pd.DataFrame({
