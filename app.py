@@ -44,7 +44,6 @@ st.write(
 
 
 # --- Sliders (Simplified Version) ---
-# We have removed the 'key' arguments and all session state logic for now.
 col1_sliders, col2_sliders = st.columns(2)
 with col1_sliders:
     fixed_acidity = st.slider('Fixed Acidity (g/dm³)', 4.0, 16.0, 7.4)
@@ -56,7 +55,6 @@ with col1_sliders:
 with col2_sliders:
     total_sulfur_dioxide = st.slider('Total Sulfur Dioxide (mg/dm³)', 6, 289, 34)
     density = st.slider('Density (g/cm³)', 0.9900, 1.0040, 0.9978, step=0.0001, format="%.4f")
-    # I've renamed the variable 'ph' to 'ph_slider' to be extra safe.
     ph_slider = st.slider('pH', 2.70, 4.00, 3.51)
     sulphates = st.slider('Sulphates (g/dm³)', 0.30, 2.00, 0.56)
     alcohol = st.slider('Alcohol (% vol.)', 8.0, 15.0, 9.4)
@@ -64,7 +62,6 @@ with col2_sliders:
 
 # --- Prediction Logic ---
 if st.button('Predict Wine Quality'):
-    # This robust logic creates a dictionary from the slider values and builds a DataFrame.
     input_dict = {
         'fixed acidity': fixed_acidity, 'volatile acidity': volatile_acidity,
         'citric acid': citric_acid, 'residual sugar': residual_sugar,
@@ -74,16 +71,13 @@ if st.button('Predict Wine Quality'):
     }
     input_data = pd.DataFrame([input_dict])
 
-    # Ensure the columns are in the exact order the model expects
     ordered_feature_names = scaler.feature_names_in_
     input_data = input_data[ordered_feature_names]
 
-    # Scale the data and make a prediction
     input_data_scaled = scaler.transform(input_data)
     prediction = model.predict(input_data_scaled)
     prediction_proba = model.predict_proba(input_data_scaled)
 
-    # Display the result
     st.subheader("Prediction Result")
     if prediction[0] == 'good':
         st.success(f"This wine is predicted to be of **GOOD** quality.")
@@ -101,9 +95,11 @@ with st.expander("Click here to see what makes a quality wine"):
         'feature': scaler.feature_names_in_,
         'importance': model.feature_importances_
     }).sort_values('importance', ascending=False)
+    
     fig, ax = plt.subplots()
     ax.barh(feature_importances['feature'], feature_importances['importance'], color='skyblue')
     ax.invert_yaxis()
     ax.set_xlabel("Importance Score")
     ax.set_title("Feature Importance")
+    
     st.pyplot(fig)
